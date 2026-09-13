@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Organization {
+  id            String   @id @default(uuid())
+  name          String
+  slug          String   @unique
+  retentionDays Int      @default(30)
+  settings      String   @default("{}")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  members   OrganizationMember[]
+  sites     Site[]
+  cameras   Camera[]
+  alerts    Alert[]
+  edgeNodes EdgeNode[]
+  auditLogs AuditLog[]
+}
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  fullName     String
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  memberships  OrganizationMember[]
+  actions      AlertAction[]
+  auditLogs    AuditLog[]
+  acknowledged Alert[]              @relation("AcknowledgedBy")
+}
+
+model OrganizationMember {
+  id             String   @id @default(uuid())
+  organizationId String
+  userId         String
+  role           String   // SuperAdmin, OrgAdmin, SiteManager, Operator, Viewer
+  siteIds        String   @default("[]") // JSON array of allowed site UUIDs
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+}
+
+model Site {
+  id             String   @id @default(uuid())
+  organizationId String
+  name           String
+  address        String?
+  timezone       String   @default("Asia/Kolkata")
+  settings       String   @default("{}")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  cameras      Camera[]
+  alerts       Alert[]
+}
+
+model Camera {
+  id             String    @id @default(uuid())
+  siteId         String
+  organizationId String
+  name           String
+  rtspUrl        String
+  onvifHost      String?
+  status         String    @default("online") // online, offline, degraded
+  lastSeenAt     DateTime?
+  config         String    @default("{}") // JSON string of camera configuration (zones, thresholds)
+  edgeNodeId     String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  site         Site         @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  alerts       Alert[]
+  edgeNode     EdgeNode?    @relation(fields: [edgeNodeId], references: [id], onDelete: SetNull)
+}
+
+model Alert {
+  id             String    @id @default(uuid())
+  organizationId String
+  siteId         String
+  cameraId       String
+  alertType      String    // weapon, violence, intrusion, loitering
+  severity       String    // critical, high, medium, low
+  confidence     Float
+  status         String    @default("new") // new, acknowledged, resolved, false_positive
+  detectedAt     DateTime
+  clipPath       String?
+  thumbnailPath  String?
+  metadata       String    @default("{}") // JSON string (bboxes, durationMs, zoneName)
+  acknowledgedBy String?
+  acknowledgedAt DateTime?
+  resolvedAt     DateTime?
+  createdAt      DateTime  @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  site         Site         @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  camera       Camera       @relation(fields: [cameraId], references: [id], onDelete: Cascade)
+  user         User?        @relation("AcknowledgedBy", fields: [acknowledgedBy], references: [id], onDelete: SetNull)
+  actions      AlertAction[]
+}
+
+model AlertAction {
+  id        String   @id @default(uuid())
+  alertId   String
+  userId    String
+  action    String   // acknowledge, resolve, false_positive, escalate, comment
+  note      String?
+  createdAt DateTime @default(now())
+
+  alert Alert @relation(fields: [alertId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model EdgeNode {
+  id              String    @id @default(uuid())
+  organizationId  String
+  name            String
+  lastHeartbeatAt DateTime?
+  status          String    @default("online")
+  config          String    @default("{}")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  cameras      Camera[]
+}
+
+model AuditLog {
+  id             String   @id @default(uuid())
+  organizationId String?
+  userId         String?
+  action         String
+  resourceType   String?
+  resourceId     String?
+  details        String   @default("{}")
+  ipAddress      String?
+  createdAt      DateTime @default(now())
+
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
