@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { initSocketServer } from './socket';
+import { initCronJobs } from './cron';
 
 import authRoutes from './routes/auth';
 import siteRoutes from './routes/sites';
@@ -41,6 +42,9 @@ app.use('/api/v1/internal', internalRoutes);
 
 // Initialize Socket.IO Server
 initSocketServer(server);
+
+// Initialize Automated Production Cron Workers
+initCronJobs();
 
 server.listen(PORT, () => {
   console.log(`\n🚀 Drishyam API Backend Server running on http://localhost:${PORT}`);

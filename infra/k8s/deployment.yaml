@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: drishyam
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drishyam-api
+  namespace: drishyam
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: drishyam-api
+  template:
+    metadata:
+      labels:
+        app: drishyam-api
+    spec:
+      containers:
+        - name: api
+          image: drishyam/api:latest
+          ports:
+            - containerPort: 4000
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "4000"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 4000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drishyam-api-svc
+  namespace: drishyam
+spec:
+  selector:
+    app: drishyam-api
+  ports:
+    - protocol: TCP
+      port: 4000
+      targetPort: 4000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drishyam-web
+  namespace: drishyam
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: drishyam-web
+  template:
+    metadata:
+      labels:
+        app: drishyam-web
+    spec:
+      containers:
+        - name: web
+          image: drishyam/web:latest
+          ports:
+            - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drishyam-web-svc
+  namespace: drishyam
+spec:
+  selector:
+    app: drishyam-web
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
