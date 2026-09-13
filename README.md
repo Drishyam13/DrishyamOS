@@ -90,6 +90,24 @@ python main.py
 
 ---
 
+## ☁️ 1-Click Deployment on Render.com
+
+DrishyamOS includes a native `render.yaml` Infrastructure-as-Code Blueprint for automated deployment on [Render](https://render.com).
+
+### Steps to Deploy on Render:
+1. Log into your **[Render Dashboard](https://dashboard.render.com)**.
+2. Click **New +** and select **Blueprint**.
+3. Connect your GitHub account and select repository **`Drishyam13/DrishyamOS`**.
+4. Render will automatically detect `render.yaml` and provision:
+   - 🐘 **PostgreSQL Managed Database** (`drishyam-db`)
+   - ⚡ **Redis Managed Cache** (`drishyam-redis`)
+   - 🚀 **Backend API & WebSockets & Cron Service** (`drishyam-api`)
+   - 💻 **Next.js Web Control Room Dashboard** (`drishyam-web`)
+   - 🤖 **Python AI Edge Agent Worker** (`drishyam-edge-agent`)
+5. Click **Apply**. Render will build and deploy all services automatically!
+
+---
+
 ## 🔑 Default Credentials
 
 | Role | Email | Password |

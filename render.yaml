@@ -1,0 +1,84 @@
+# Render.yaml - Infrastructure as Code Blueprint for Render Deployment
+
+services:
+  # 1. Backend API & Real-time WebSocket Server + Automated Cron Workers
+  - type: web
+    name: drishyam-api
+    env: docker
+    dockerfilePath: ./services/api/Dockerfile
+    dockerContext: .
+    region: singapore # or oregon, frankfurt, ohio
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 4000
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: drishyam-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: drishyam-redis
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: EDGE_SERVICE_TOKEN
+        generateValue: true
+
+  # 2. Next.js SOC Control Room Web Dashboard
+  - type: web
+    name: drishyam-web
+    env: docker
+    dockerfilePath: ./apps/web/Dockerfile
+    dockerContext: .
+    region: singapore
+    plan: starter
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: drishyam-api
+          property: url
+      - key: NEXT_PUBLIC_WS_URL
+        fromService:
+          type: web
+          name: drishyam-api
+          property: url
+
+  # 3. Python AI Computer Vision Edge Agent Worker
+  - type: worker
+    name: drishyam-edge-agent
+    env: docker
+    dockerfilePath: ./apps/edge-agent/Dockerfile
+    dockerContext: .
+    region: singapore
+    plan: starter
+    envVars:
+      - key: API_URL
+        fromService:
+          type: web
+          name: drishyam-api
+          property: url
+      - key: EDGE_SERVICE_TOKEN
+        fromService:
+          type: web
+          name: drishyam-api
+          envVarKey: EDGE_SERVICE_TOKEN
+      - key: SIMULATE_EVENTS
+        value: "true"
+
+# Managed Databases on Render
+databases:
+  - name: drishyam-db
+    databaseName: drishyam_db
+    user: drishyam_user
+    region: singapore
+    plan: starter
