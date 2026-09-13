@@ -15,7 +15,7 @@ services:
     region: singapore
     plan: free
     buildCommand: npm install && npm run build:shared && npx prisma generate --schema=services/api/prisma/schema.prisma && npm run build:api
-    startCommand: npx prisma db push --schema=services/api/prisma/schema.prisma --accept-data-loss && npx tsx services/api/src/seed.ts && node services/api/dist/index.js
+    startCommand: npx prisma db push --schema=services/api/prisma/schema.prisma --accept-data-loss && node services/api/dist/seed.js && node services/api/dist/index.js
     healthCheckPath: /health
     envVars:
       - key: PORT
