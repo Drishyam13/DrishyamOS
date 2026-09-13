@@ -33,7 +33,10 @@ export default function DashboardPage() {
     loadDashboardData();
 
     // Connect WebSocket
-    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:4000';
+    let wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:4000';
+    if (!wsUrl.startsWith('http://') && !wsUrl.startsWith('https://')) {
+      wsUrl = `https://${wsUrl}`;
+    }
     const token = localStorage.getItem('drishyam_token');
 
     const socket: Socket = io(wsUrl, {
