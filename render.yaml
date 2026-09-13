@@ -11,11 +11,11 @@ services:
   # 2. Backend API & Real-time WebSocket Server + Automated Cron Workers
   - type: web
     name: drishyam-api
-    env: docker
-    dockerfilePath: ./services/api/Dockerfile
-    dockerContext: .
+    env: node
     region: singapore
     plan: free
+    buildCommand: npm install && npm run build --workspace=packages/shared && npm run build --workspace=services/api && cd services/api && npx prisma generate && npx prisma db push && npm run db:seed
+    startCommand: node services/api/dist/index.js
     healthCheckPath: /health
     envVars:
       - key: PORT
@@ -39,11 +39,11 @@ services:
   # 3. Next.js SOC Control Room Web Dashboard
   - type: web
     name: drishyam-web
-    env: docker
-    dockerfilePath: ./apps/web/Dockerfile
-    dockerContext: .
+    env: node
     region: singapore
     plan: free
+    buildCommand: npm install && npm run build --workspace=packages/shared && npm run build --workspace=apps/web
+    startCommand: npm start --workspace=apps/web
     envVars:
       - key: PORT
         value: 3000
@@ -63,11 +63,11 @@ services:
   # 4. Python AI Computer Vision Edge Agent Worker
   - type: worker
     name: drishyam-edge-agent
-    env: docker
-    dockerfilePath: ./apps/edge-agent/Dockerfile
-    dockerContext: .
+    env: python
     region: singapore
     plan: free
+    buildCommand: pip install -r apps/edge-agent/requirements.txt
+    startCommand: python apps/edge-agent/main.py
     envVars:
       - key: API_URL
         fromService:

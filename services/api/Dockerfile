@@ -11,6 +11,7 @@ COPY services/api ./services/api
 
 # Install dependencies and build shared package + api
 RUN npm install
+RUN cd services/api && npx prisma generate
 RUN npm run build --workspace=packages/shared
 RUN npm run build --workspace=services/api
 
@@ -37,4 +38,4 @@ EXPOSE 4000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:4000/health || exit 1
 
-CMD ["node", "services/api/dist/index.js"]
+CMD ["sh", "-c", "cd services/api && npx prisma db push && node dist/index.js"]
