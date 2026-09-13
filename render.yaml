@@ -1,11 +1,11 @@
-# Render.yaml - Infrastructure as Code Blueprint for Render Deployment
+# Render.yaml - 100% Free Tier Blueprint for Render Deployment
 
 services:
   # 1. Managed Redis Cache & PubSub
   - type: redis
     name: drishyam-redis
     region: singapore
-    plan: starter
+    plan: free
     ipAllowList: []
 
   # 2. Backend API & Real-time WebSocket Server + Automated Cron Workers
@@ -15,7 +15,7 @@ services:
     dockerfilePath: ./services/api/Dockerfile
     dockerContext: .
     region: singapore
-    plan: starter
+    plan: free
     healthCheckPath: /health
     envVars:
       - key: PORT
@@ -43,7 +43,7 @@ services:
     dockerfilePath: ./apps/web/Dockerfile
     dockerContext: .
     region: singapore
-    plan: starter
+    plan: free
     envVars:
       - key: PORT
         value: 3000
@@ -67,7 +67,7 @@ services:
     dockerfilePath: ./apps/edge-agent/Dockerfile
     dockerContext: .
     region: singapore
-    plan: starter
+    plan: free
     envVars:
       - key: API_URL
         fromService:
@@ -82,10 +82,10 @@ services:
       - key: SIMULATE_EVENTS
         value: "true"
 
-# Managed PostgreSQL Database on Render
+# Managed PostgreSQL Database on Render (Free Tier)
 databases:
   - name: drishyam-db
     databaseName: drishyam_db
     user: drishyam_user
     region: singapore
-    plan: starter
+    plan: free
