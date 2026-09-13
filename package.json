@@ -8,8 +8,9 @@
     "apps/*"
   ],
   "scripts": {
-    "dev:api": "npm run dev --workspace=services/api",
-    "dev:web": "npm run dev --workspace=apps/web",
-    "build": "npm run build --workspaces"
+    "build:shared": "npm run build --workspace=packages/shared",
+    "build:api": "npm run build --workspace=services/api",
+    "build:web": "npm run build --workspace=apps/web",
+    "build": "npm run build:shared && npm run build:api && npm run build:web"
   }
 }

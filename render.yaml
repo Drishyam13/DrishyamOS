@@ -14,7 +14,7 @@ services:
     env: node
     region: singapore
     plan: free
-    buildCommand: npm install && npx prisma generate --schema=services/api/prisma/schema.prisma && npm run build --workspace=packages/shared && npm run build --workspace=services/api && npx prisma db push --schema=services/api/prisma/schema.prisma && npx tsx services/api/src/seed.ts
+    buildCommand: npm install && npm run build:shared && npx prisma generate --schema=services/api/prisma/schema.prisma && npm run build:api && npx prisma db push --schema=services/api/prisma/schema.prisma && npx tsx services/api/src/seed.ts
     startCommand: node services/api/dist/index.js
     healthCheckPath: /health
     envVars:
@@ -42,7 +42,7 @@ services:
     env: node
     region: singapore
     plan: free
-    buildCommand: npm install && npm run build --workspace=packages/shared && npm run build --workspace=apps/web
+    buildCommand: npm install && npm run build:shared && npm run build:web
     startCommand: npm start --workspace=apps/web
     envVars:
       - key: PORT

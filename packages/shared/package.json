@@ -1,7 +1,13 @@
 {
   "name": "@drishyam/shared",
   "version": "1.0.0",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
-  "private": true
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "private": true,
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
 }
