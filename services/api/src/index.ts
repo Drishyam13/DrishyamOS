@@ -12,6 +12,9 @@ import cameraRoutes from './routes/cameras';
 import alertRoutes from './routes/alerts';
 import memberRoutes from './routes/members';
 import internalRoutes from './routes/internal';
+import watchlistRoutes from './routes/watchlist';
+import automationRoutes from './routes/automation';
+import analyticsRoutes from './routes/analytics';
 
 dotenv.config();
 
@@ -39,6 +42,9 @@ app.use('/api/v1/cameras', cameraRoutes);
 app.use('/api/v1/alerts', alertRoutes);
 app.use('/api/v1/members', memberRoutes);
 app.use('/api/v1/internal', internalRoutes);
+app.use('/api/v1/watchlist', watchlistRoutes);
+app.use('/api/v1/automation', automationRoutes);
+app.use('/api/v1/analytics', analyticsRoutes);
 
 // Initialize Socket.IO Server
 initSocketServer(server);

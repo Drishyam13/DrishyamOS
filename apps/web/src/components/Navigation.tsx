@@ -11,7 +11,10 @@ import {
   Camera,
   MapPin,
   Users,
-  Settings,
+  Sparkles,
+  BarChart3,
+  UserCheck,
+  Zap,
   Activity,
 } from 'lucide-react';
 
@@ -19,7 +22,11 @@ const navItems = [
   { href: '/dashboard', label: 'Command Center', icon: LayoutDashboard },
   { href: '/live', label: 'Live Camera Grid', icon: Video },
   { href: '/alerts', label: 'Alert Manager', icon: BellRing },
+  { href: '/search', label: 'Smart Search', icon: Sparkles },
+  { href: '/analytics', label: 'SOC Analytics', icon: BarChart3 },
   { href: '/cameras', label: 'Cameras & Zones', icon: Camera },
+  { href: '/watchlist', label: 'Face Watchlist', icon: UserCheck },
+  { href: '/automation', label: 'IoT Response Rules', icon: Zap },
   { href: '/sites', label: 'Facilities & Sites', icon: MapPin },
   { href: '/members', label: 'Team Members', icon: Users },
 ];
@@ -42,7 +49,7 @@ export function Navigation() {
         </div>
 
         {/* Navigation Items */}
-        <nav className="p-3 space-y-1.5 mt-2">
+        <nav className="p-3 space-y-1 mt-2 overflow-y-auto max-h-[calc(100vh-180px)]">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -50,7 +57,7 @@ export function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-150 ${
+                className={`flex items-center gap-3 px-3.5 py-2 rounded-xl font-medium text-xs transition-all duration-150 ${
                   isActive
                     ? 'bg-brand-600 text-white shadow-glow'
                     : 'text-slate-400 hover:text-slate-100 hover:bg-dark-800/60'
@@ -65,12 +72,12 @@ export function Navigation() {
       </div>
 
       {/* Edge System Status Badge */}
-      <div className="p-4 m-3 rounded-2xl glass-panel border border-slate-800/80">
-        <div className="flex items-center gap-2 mb-2">
+      <div className="p-3 m-3 rounded-2xl glass-panel border border-slate-800/80">
+        <div className="flex items-center gap-2 mb-1.5">
           <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
           <span className="text-xs font-semibold text-slate-200">AI Inference Engine</span>
         </div>
-        <div className="text-xs text-slate-400 space-y-1">
+        <div className="text-[11px] text-slate-400 space-y-1">
           <div className="flex justify-between">
             <span>Edge Gateway:</span>
             <span className="text-emerald-400 font-mono">ONLINE</span>

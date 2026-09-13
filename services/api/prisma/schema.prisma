@@ -16,12 +16,14 @@ model Organization {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  members   OrganizationMember[]
-  sites     Site[]
-  cameras   Camera[]
-  alerts    Alert[]
-  edgeNodes EdgeNode[]
-  auditLogs AuditLog[]
+  members        OrganizationMember[]
+  sites          Site[]
+  cameras        Camera[]
+  alerts         Alert[]
+  edgeNodes      EdgeNode[]
+  auditLogs      AuditLog[]
+  faceWatchlist  FaceWatchlist[]
+  automatedRules AutomatedRule[]
 }
 
 model User {
@@ -124,6 +126,34 @@ model AlertAction {
 
   alert Alert @relation(fields: [alertId], references: [id], onDelete: Cascade)
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model FaceWatchlist {
+  id             String   @id @default(uuid())
+  organizationId String
+  name           String
+  category       String   @default("blacklist") // blacklist, vip, restricted
+  notes          String?
+  imageUrl       String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}
+
+model AutomatedRule {
+  id              String   @id @default(uuid())
+  organizationId  String
+  name            String
+  triggerSeverity String   // critical, high, medium, low
+  triggerType     String?  // weapon, violence, intrusion, loitering
+  actionType      String   // trigger_siren, lock_doors, send_sms, escalate
+  enabled         Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 model EdgeNode {

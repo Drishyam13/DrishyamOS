@@ -33,8 +33,14 @@ export enum CameraStatus {
   DEGRADED = 'degraded',
 }
 
+export enum WatchlistCategory {
+  BLACKLIST = 'blacklist',
+  VIP = 'vip',
+  RESTRICTED = 'restricted',
+}
+
 export interface Point {
-  x: number; // Normalized 0.0 - 1.0 or pixel coordinates
+  x: number;
   y: number;
 }
 
@@ -44,7 +50,7 @@ export interface PolygonZone {
   type: AlertType.INTRUSION | AlertType.LOITERING;
   points: Point[];
   enabled: boolean;
-  minDurationSeconds?: number; // for loitering
+  minDurationSeconds?: number;
 }
 
 export interface BoundingBox {
@@ -148,6 +154,37 @@ export interface AlertDTO {
   resolvedAt?: string;
   actions?: AlertActionDTO[];
   createdAt: string;
+}
+
+export interface FaceWatchlistDTO {
+  id: string;
+  organizationId: string;
+  name: string;
+  category: WatchlistCategory;
+  notes?: string;
+  imageUrl?: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface AutomatedRuleDTO {
+  id: string;
+  organizationId: string;
+  name: string;
+  triggerSeverity: AlertSeverity;
+  triggerType?: AlertType;
+  actionType: 'trigger_siren' | 'lock_doors' | 'send_sms' | 'escalate';
+  enabled: boolean;
+  createdAt: string;
+}
+
+export interface AnalyticsSummaryDTO {
+  totalAlerts: number;
+  criticalAlerts: number;
+  avgResponseTimeSeconds: number;
+  falsePositivePercentage: number;
+  alertsByType: Record<string, number>;
+  hourlyAlertDistribution: Array<{ hour: string; count: number }>;
 }
 
 export interface EventIngestPayload {
