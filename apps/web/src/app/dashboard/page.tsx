@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Navigation } from '../../components/Navigation';
 import { Header } from '../../components/Header';
 import { VideoPlayer } from '../../components/VideoPlayer';
-import { fetchApi } from '../../lib/api';
+import { fetchApi, getWsBaseUrl } from '../../lib/api';
 import { AlertDTO, CameraDTO, AlertStatus, AlertType, AlertSeverity } from '@drishyam/shared';
 import { io, Socket } from 'socket.io-client';
 import {
@@ -33,10 +33,7 @@ export default function DashboardPage() {
     loadDashboardData();
 
     // Connect WebSocket
-    let wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:4000';
-    if (!wsUrl.startsWith('http://') && !wsUrl.startsWith('https://')) {
-      wsUrl = `https://${wsUrl}`;
-    }
+    const wsUrl = getWsBaseUrl();
     const token = localStorage.getItem('drishyam_token');
 
     const socket: Socket = io(wsUrl, {

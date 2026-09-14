@@ -50,15 +50,9 @@ services:
       - key: NODE_ENV
         value: production
       - key: NEXT_PUBLIC_API_URL
-        fromService:
-          type: web
-          name: drishyam-api
-          property: host
+        value: https://drishyam-api.onrender.com
       - key: NEXT_PUBLIC_WS_URL
-        fromService:
-          type: web
-          name: drishyam-api
-          property: host
+        value: https://drishyam-api.onrender.com
 
   # 4. Python AI Computer Vision Edge Agent Worker
   - type: worker
